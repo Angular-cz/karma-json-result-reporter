@@ -26,11 +26,9 @@ This is a karma reporter that will export your test data in the form of JSON but
     }
   }
 }
-
 ```
 
 ## Installation
-
 
 ```
 npm install --save-dev karma-json-result-reporter
@@ -45,9 +43,9 @@ reporters: ['json-result', 'dots'],
 You will also need to set the location that you need to output your JSON file.
 
 ```
-    jsonResultReporter: {
-        outputFile: "karma-result.json"
-    }
+jsonResultReporter: {
+  outputFile: "karma-result.json"
+}
 ```
 
 

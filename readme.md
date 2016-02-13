@@ -34,10 +34,21 @@ This is a karma reporter that will export your test data in the form of JSON but
 npm install --save-dev karma-json-result-reporter
 ```
 
-In your `karma.conf.js` add include `'json-result'` to your reporters like below:
+In your `karma.conf.js` add
+ - `'karma-json-result-reporter'` to your plugins like below:
+ - `'json-result'` to your reporters like below:
 
 ```
-reporters: ['json-result', 'dots'],
+plugins: [
+    ...
+    'karma-json-result-reporter',
+    ...
+  ];
+
+reporters: [
+    'json-result'
+    ...
+  ],
 ```
 
 You will also need to set the location that you need to output your JSON file.

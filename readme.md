@@ -35,8 +35,8 @@ npm install --save-dev karma-json-result-reporter
 ```
 
 In your `karma.conf.js` add
- - `'karma-json-result-reporter'` to your plugins like below:
- - `'json-result'` to your reporters like below:
+ - `'karma-json-result-reporter'` to your plugins
+ - `'json-result'` to your reporters
 
 ```
 plugins: [

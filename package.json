@@ -1,0 +1,29 @@
+{
+  "name": "karma-json-result-reporter",
+  "version": "0.1.0",
+  "description": "test results as json file",
+  "main": "index.js",
+  "scripts": {
+    "test": "jasmine"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Angular-cz/karma-json-result-reporter.git"
+  },
+  "keywords": [
+    "karma-plugin",
+    "karma-reporter"
+  ],
+  "author": "Milan Lempera <milanlempera@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Angular-cz/karma-json-result-reporter/issues"
+  },
+  "homepage": "https://github.com/Angular-cz/karma-json-result-reporter#readme",
+  "devDependencies": {
+    "jasmine": "^2.4.1"
+  },
+  "dependencies": {
+    "ramda": "^0.19.1"
+  }
+}

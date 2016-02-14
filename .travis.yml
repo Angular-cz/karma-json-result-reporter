@@ -1,3 +1,5 @@
 language: node_js
 node_js:
   - "4"
+notifications:
+  slack: angular-cz:92HfA5hujXzEh3cJ8lJYJFDV

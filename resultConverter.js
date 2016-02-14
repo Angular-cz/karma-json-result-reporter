@@ -1,4 +1,4 @@
-var R = require('ramda');
+var funMap = require('fun-map');
 
 function simplifyResult(result) {
   var testResult = {
@@ -15,10 +15,17 @@ function simplifyResult(result) {
   return testResult;
 }
 
+function getPathArray(result) {
+  var path = result.suite.slice();
+  path.push(result.description);
+
+  return path;
+}
+
 function reduceToObject(accumulator, result) {
   var simplifiedResult = simplifyResult(result);
-  var path = R.append(result.description, result.suite);
-  return R.assocPath(path, simplifiedResult, accumulator);
+  var path = getPathArray(result);
+  return funMap.assocInM(accumulator, path, simplifiedResult);
 }
 
 function convertResults(results) {

@@ -1,7 +1,7 @@
 # Karma JSON result reporter
 
 [![npm version](https://img.shields.io/npm/v/karma-json-result-reporter.svg?style=plastic)](https://www.npmjs.com/package/karma-json-result-reporter)
-[![Travis](https://img.shields.io/Angular-cz/karma-json-result-reporter/rust.svg?style=plastic)](https://travis-ci.org/Angular-cz/karma-json-result-reporter)
+[![Travis](https://img.shields.io/Angular-cz/karma-json-result-reporter.svg?style=plastic)](https://travis-ci.org/Angular-cz/karma-json-result-reporter)
 
 
 This is a karma reporter that will export your test data in the form of JSON but keys all describe contexts such as:

@@ -20,17 +20,32 @@ function writeOutput(config, output) {
 var JsonResultReporter = function(baseReporterDecorator, config) {
   baseReporterDecorator(this);
 
-  this.results = [];
+  this.clear = function() {
+    this.results = [];
+    this.errors = [];
+  };
+
+  this.onBrowserError = function(browser, error) {
+    this.errors.push(error);
+  };
 
   this.onSpecComplete = function(browser, result) {
     this.results.push(result);
   };
 
   this.onRunComplete = function() {
-    var output = converter.convertResults(this.results);
+    var output;
+    if (this.errors.length) {
+      output = converter.convertErrors(this.errors);
+    } else {
+      output = converter.convertResults(this.results);
+    }
     writeOutput(config, output);
-    this.results = [];
+
+    this.clear();
   };
+
+  this.clear();
 };
 
 JsonResultReporter.$inject = ['baseReporterDecorator', 'config.jsonResultReporter'];

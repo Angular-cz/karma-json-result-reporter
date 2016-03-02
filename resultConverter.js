@@ -1,8 +1,18 @@
 var funMap = require('fun-map');
 
+function splitByNewLine(text) {
+  return text.split('\n');
+}
+
+function splitItemsByNewLine(texts) {
+  return texts.reduce(function(acc, item) {
+    return acc.concat(splitByNewLine(item));
+  }, []);
+}
+
 function simplifyResult(result) {
   var testResult = {
-    log: result.log || [],
+    log: splitItemsByNewLine(result.log || []),
     time: result.time
   };
 
@@ -32,8 +42,14 @@ function convertResults(results) {
   return results.reduce(reduceToObject, {});
 }
 
+function convertErrors(errors) {
+  console.log('convertErrors');
+  return {"__BROWSER_ERRORS__": splitItemsByNewLine(errors)};
+}
+
 module.exports = {
   simplifyResult: simplifyResult,
   reduceToObject: reduceToObject,
-  convertResults: convertResults
+  convertResults: convertResults,
+  convertErrors: convertErrors
 };

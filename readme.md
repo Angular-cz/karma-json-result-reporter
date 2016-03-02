@@ -16,7 +16,8 @@ This is a karma reporter that will export your test data in the form of JSON but
     },
     "might have a failing test": {
       "log": [
-          "Expected undefined to equal 'input'.\nhttp://localhost:9879/......./display.spec.js:44:36"
+          "Expected undefined to equal 'input'."
+          "http://localhost:9879/......./display.spec.js:44:36"
       ],
       "time": 14,
       "status": "FAILED"
@@ -26,9 +27,20 @@ This is a karma reporter that will export your test data in the form of JSON but
           "log": [],
           "time": 0,
           "status": "SKIPPED"
-      },
+      }
     }
   }
+}
+```
+
+If an error occurs in the browser, will be written as
+
+```
+{
+    "__BROWSER_ERRORS__": [
+        "SyntaxError: Parse error",
+        "at http://localhost:9877/base/app.spec.js?8e5e93760e0333550c0c67b01e552002b52e0166:31"
+    ]
 }
 ```
 

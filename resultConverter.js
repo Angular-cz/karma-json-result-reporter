@@ -20,9 +20,8 @@ function simplifyResult(result) {
     testResult.status = 'SKIPPED';
   } else {
     testResult.status = result.success ? 'PASSED' : 'FAILED';
+    testResult.noExpectationsWarning = result.success && result.executedExpectationsCount === 0;
   }
-
-  testResult.noExpectations = result.success && result.executedExpectationsCount === 0;
 
   return testResult;
 }

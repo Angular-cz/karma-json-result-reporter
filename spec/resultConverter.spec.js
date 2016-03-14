@@ -67,7 +67,51 @@ describe("Result", function() {
       expect(output.time).not.toBeDefined();
     });
 
+    describe("noExpectations flag", function() {
+
+      it("should be true only if test passed and no expectations was executed", function() {
+        var result = {
+          executedExpectationsCount: 0,
+          success: true
+        };
+
+        var output = converter.simplifyResult(result);
+        expect(output.noExpectations).toBe(true);
+      });
+
+      it("should be false if test passed and one expectations was executed", function() {
+
+        var result = {
+          executedExpectationsCount: 1,
+          success: true
+        };
+
+        var output = converter.simplifyResult(result);
+        expect(output.noExpectations).toBe(false);
+      });
+
+      it("should be false if test failed", function() {
+        var result = {
+          executedExpectationsCount: 0,
+          success: false
+        };
+
+        var output = converter.simplifyResult(result);
+        expect(output.noExpectations).toBe(false);
+      });
+
+      it("should be false if executedExpectationsCount is not defined in result", function() {
+        var result = {
+          success: true
+        };
+
+        var output = converter.simplifyResult(result);
+        expect(output.noExpectations).toBe(false);
+      });
+
+    });
   });
+
   describe("reduceToObject", function() {
 
     it("should create suite - description hierarchy", function() {

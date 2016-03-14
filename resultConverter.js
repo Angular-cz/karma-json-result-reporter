@@ -22,6 +22,8 @@ function simplifyResult(result) {
     testResult.status = result.success ? 'PASSED' : 'FAILED';
   }
 
+  testResult.noExpectations = result.success && result.executedExpectationsCount === 0;
+
   return testResult;
 }
 

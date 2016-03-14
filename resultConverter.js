@@ -45,7 +45,6 @@ function convertResults(results) {
 }
 
 function convertErrors(errors) {
-  console.log('convertErrors');
   return {"__BROWSER_ERRORS__": splitItemsByNewLine(errors)};
 }
 

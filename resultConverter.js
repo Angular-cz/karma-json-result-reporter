@@ -1,7 +1,7 @@
 var funMap = require('fun-map');
 
 function splitByNewLine(text) {
-  return text.split('\n');
+  return text.split('\n').filter(Boolean);
 }
 
 function splitItemsByNewLine(texts) {

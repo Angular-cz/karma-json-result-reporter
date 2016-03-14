@@ -17,8 +17,12 @@ function writeOutput(config, output) {
   }
 }
 
-var JsonResultReporter = function(baseReporterDecorator, config) {
+var JsonResultReporter = function(baseReporterDecorator, formatError, config) {
   baseReporterDecorator(this);
+
+  var logMessageFormater = function(error) {
+    return formatError(error)
+  };
 
   this.clear = function() {
     this.results = [];
@@ -30,13 +34,14 @@ var JsonResultReporter = function(baseReporterDecorator, config) {
   };
 
   this.onSpecComplete = function(browser, result) {
+    result.log = result.log.map(logMessageFormater);
     this.results.push(result);
   };
 
   this.onRunComplete = function() {
     var output;
     if (this.errors.length) {
-      output = converter.convertErrors(this.errors);
+      output = converter.convertErrors(this.errors.map(logMessageFormater));
     } else {
       output = converter.convertResults(this.results);
     }
@@ -48,7 +53,7 @@ var JsonResultReporter = function(baseReporterDecorator, config) {
   this.clear();
 };
 
-JsonResultReporter.$inject = ['baseReporterDecorator', 'config.jsonResultReporter'];
+JsonResultReporter.$inject = ['baseReporterDecorator', 'formatError', 'config.jsonResultReporter'];
 
 module.exports = {
   'reporter:json-result': ['type', JsonResultReporter]

@@ -39,6 +39,8 @@ describe("JsonResultReporter", function() {
 
     describe("with real files", function() {
 
+      var ERROR_TEXT = 'some test error';
+
       beforeEach(function(done) {
         this.tempTestDir = os.tmpdir() + '/karma-json-result-reporter';
 
@@ -63,21 +65,44 @@ describe("JsonResultReporter", function() {
           outputFile: this.tempTestDir + '/report-file.json'
         };
 
+
         var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config);
-        reporter.onBrowserError('test', 'some test error');
+        reporter.onBrowserError('test', ERROR_TEXT);
         reporter.onRunComplete();
 
-        fs.readFile(config.outputFile, function(err, result) {
-          if (err) {
-            done.fail('Read file error - ' + config.outputFile + ': ' + err)
-          }
-
-          expect(result.toString()).toMatch('some test error');
-          done();
-        });
-
-
+        waitForFileAndCheckContent(config.outputFile, done);
       });
+
+      it('should be able write report to nested path', function(done) {
+        var config = {
+          outputFile: this.tempTestDir + '/my/nested/path/report-file.json'
+        };
+
+        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config);
+        reporter.onBrowserError('test', ERROR_TEXT);
+        reporter.onRunComplete();
+
+        waitForFileAndCheckContent(config.outputFile, done);
+      });
+
+
+      function waitForFileAndCheckContent(outputFile, done) {
+        setImmediate(function() {
+          if (fs.existsSync(outputFile)) {
+            fs.readFile(outputFile, function(err, result) {
+              if (err) {
+                done.fail('Read file error - ' + outputFile + ': ' + err);
+                return;
+              }
+
+              expect(result.toString()).toMatch(ERROR_TEXT);
+              done();
+            });
+          } else {
+            waitForFileAndCheckContent(outputFile, done);
+          }
+        });
+      }
     });
   })
 });

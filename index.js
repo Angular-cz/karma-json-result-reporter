@@ -1,11 +1,12 @@
 var fs = require('fs');
+var writeFile = require('writefile');
 var converter = require('./resultConverter');
 
 var log = console.log.bind(console, "JsonResultReporter:");
 
 function writeOutput(config, output) {
   if (config.outputFile) {
-    fs.writeFile(config.outputFile, JSON.stringify(output, null, 4), function(err) {
+    writeFile(config.outputFile, JSON.stringify(output, null, 4), function(err) {
       if (err) {
         log(err);
       } else {

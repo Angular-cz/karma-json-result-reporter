@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/Angular-cz/karma-json-result-reporter#readme",
   "devDependencies": {
+    "del": "^2.2.1",
     "jasmine": "^2.4.1"
   },
   "dependencies": {

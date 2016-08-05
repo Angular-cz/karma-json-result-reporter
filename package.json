@@ -25,7 +25,6 @@
     "jasmine": "^2.4.1"
   },
   "dependencies": {
-    "fun-map": "^3.3.1",
-    "writefile": "^0.2.8"
+    "fun-map": "^3.3.1"
   }
 }

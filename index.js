@@ -1,16 +1,18 @@
+var path = require('path');
 var fs = require('fs');
-var writeFile = require('writefile');
 var converter = require('./resultConverter');
 
-var log = console.log.bind(console, "JsonResultReporter:");
+function writeOutput(config, output, helper, logger) {
 
-function writeOutput(config, output) {
+  var log = logger.create('karma-json-result-reporter');
+
   if (config.outputFile) {
-    writeFile(config.outputFile, JSON.stringify(output, null, 4), function(err) {
-      if (err) {
-        log(err);
-      } else {
-        log("JSON file was written to " + config.outputFile);
+    helper.mkdirIfNotExists(path.dirname(config.outputFile), function() {
+      log.debug('Writing test results to JSON file ' + config.outputFile);
+      try {
+        fs.writeFileSync(config.outputFile, JSON.stringify(output, null, 4));
+      } catch (err) {
+        log.warn('Cannot write test results to JSON file\n\t' + err.message);
       }
     });
   } else {
@@ -18,7 +20,8 @@ function writeOutput(config, output) {
   }
 }
 
-var JsonResultReporter = function(baseReporterDecorator, formatError, config) {
+var JsonResultReporter = function(baseReporterDecorator, formatError, config, helper, logger) {
+
   baseReporterDecorator(this);
 
   var logMessageFormater = function(error) {
@@ -46,7 +49,7 @@ var JsonResultReporter = function(baseReporterDecorator, formatError, config) {
     } else {
       output = converter.convertResults(this.results);
     }
-    writeOutput(config, output);
+    writeOutput(config, output, helper, logger);
 
     this.clear();
   };
@@ -54,7 +57,7 @@ var JsonResultReporter = function(baseReporterDecorator, formatError, config) {
   this.clear();
 };
 
-JsonResultReporter.$inject = ['baseReporterDecorator', 'formatError', 'config.jsonResultReporter'];
+JsonResultReporter.$inject = ['baseReporterDecorator', 'formatError', 'config.jsonResultReporter', 'helper', 'logger'];
 
 module.exports = {
   'reporter:json-result': ['type', JsonResultReporter]

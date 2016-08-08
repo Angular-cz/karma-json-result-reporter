@@ -23,13 +23,19 @@ describe("JsonResultReporter", function() {
       this.formatError = jasmine.createSpy('formatError').and.callFake(function(error) {
         return error;
       });
+      this.helper = jasmine.createSpy('helper');
+      function mkdirIfNotExists(dirStr, callback) {};
+      spyOn(this.helper, 'mkdirIfNotExists');
+      this.logger = jasmine.createSpy('logger');
+      function create(loggerName) {};
+      spyOn(this.logger, 'create');
     });
 
 
     it('should be instantiable', function() {
       var config = {};
 
-      var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config);
+      var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
 
       expect(reporter).toEqual(jasmine.any(Object));
       expect(this.baseReporterDecorator).toHaveBeenCalledTimes(1);
@@ -66,7 +72,7 @@ describe("JsonResultReporter", function() {
         };
 
 
-        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config);
+        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
         reporter.onBrowserError('test', ERROR_TEXT);
         reporter.onRunComplete();
 
@@ -78,7 +84,7 @@ describe("JsonResultReporter", function() {
           outputFile: this.tempTestDir + '/my/nested/path/report-file.json'
         };
 
-        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config);
+        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
         reporter.onBrowserError('test', ERROR_TEXT);
         reporter.onRunComplete();
 

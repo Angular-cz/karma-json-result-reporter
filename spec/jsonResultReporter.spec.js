@@ -24,11 +24,16 @@ describe("JsonResultReporter", function() {
         return error;
       });
       this.helper = jasmine.createSpy('helper');
-      this.helper.mkdirIfNotExists = jasmine.createSpy('mkdirIfNotExists spy').and.callFake(function(dirStr, callback) {
+      this.helper.mkdirIfNotExists = jasmine.createSpy('helper.mkdirIfNotExists spy').and.callFake(function(dirStr, callback) {
         callback();
       });
       this.logger = jasmine.createSpy('logger');
-      this.logger.create = jasmine.createSpy('create spy').and.callFake(function(loggerName) {});
+      log = jasmine.createSpy('log');
+      log.debug = jasmine.createSpy('log.debug spy').and.callFake(function(output) {});
+      log.warn = jasmine.createSpy('log.warn spy').and.callFake(function(output) {});
+      this.logger.create = jasmine.createSpy('logger.create spy').and.callFake(function(loggerName) {
+        return log;
+      });
     });
 
 

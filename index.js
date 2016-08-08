@@ -8,11 +8,21 @@ function writeOutput(config, output, helper, logger) {
 
   if (config.outputFile) {
     helper.mkdirIfNotExists(path.dirname(config.outputFile), function() {
-      log.debug('Writing test results to JSON file ' + config.outputFile);
-      try {
-        fs.writeFileSync(config.outputFile, JSON.stringify(output, null, 4));
-      } catch (err) {
-        log.warn('Cannot write test results to JSON file\n\t' + err.message);
+      if (config.isSynchronous) {
+        log.debug('Writing test results to JSON file ' + config.outputFile);
+        try {
+          fs.writeFileSync(config.outputFile, JSON.stringify(output, null, 4));
+        } catch (err) {
+          log.warn('Cannot write test results to JSON file\n\t' + err.message);
+        }
+      } else {
+        fs.writeFile(config.outputFile, JSON.stringify(output, null, 4), function(err) {
+          if (err) {
+            log.warn('Cannot write test results to JSON file\n\t' + err.message);
+          } else {
+            log.debug('Test results were written to JSON file ' + config.outputFile);
+          }
+        });
       }
     });
   } else {

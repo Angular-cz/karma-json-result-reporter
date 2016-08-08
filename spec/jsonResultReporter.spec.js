@@ -24,11 +24,9 @@ describe("JsonResultReporter", function() {
         return error;
       });
       this.helper = jasmine.createSpy('helper');
-      function mkdirIfNotExists(dirStr, callback) {};
-      spyOn(this.helper, 'mkdirIfNotExists');
+      this.helper.mkdirIfNotExists = jasmine.createSpy('mkdirIfNotExists spy').and.callFake(function(dirStr, callback) {});
       this.logger = jasmine.createSpy('logger');
-      function create(loggerName) {};
-      spyOn(this.logger, 'create');
+      this.logger.create = jasmine.createSpy('create spy').and.callFake(function(loggerName) {});
     });
 
 

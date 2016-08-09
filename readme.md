@@ -71,7 +71,8 @@ You will also need to set the location that you need to output your JSON file.
 
 ```
 jsonResultReporter: {
-  outputFile: "karma-result.json"
+  outputFile: "karma-result.json",
+  isSynchronous: true (optional, default false)
 }
 ```
 

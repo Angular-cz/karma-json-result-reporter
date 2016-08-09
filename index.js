@@ -1,16 +1,28 @@
+var path = require('path');
 var fs = require('fs');
-var writeFile = require('writefile');
 var converter = require('./resultConverter');
 
-var log = console.log.bind(console, "JsonResultReporter:");
+function writeOutput(config, output, helper, logger) {
 
-function writeOutput(config, output) {
+  var log = logger.create('karma-json-result-reporter');
+
   if (config.outputFile) {
-    writeFile(config.outputFile, JSON.stringify(output, null, 4), function(err) {
-      if (err) {
-        log(err);
+    helper.mkdirIfNotExists(path.dirname(config.outputFile), function() {
+      if (config.isSynchronous) {
+        log.debug('Writing test results to JSON file ' + config.outputFile);
+        try {
+          fs.writeFileSync(config.outputFile, JSON.stringify(output, null, 4));
+        } catch (err) {
+          log.warn('Cannot write test results to JSON file\n\t' + err.message);
+        }
       } else {
-        log("JSON file was written to " + config.outputFile);
+        fs.writeFile(config.outputFile, JSON.stringify(output, null, 4), function(err) {
+          if (err) {
+            log.warn('Cannot write test results to JSON file\n\t' + err.message);
+          } else {
+            log.debug('Test results were written to JSON file ' + config.outputFile);
+          }
+        });
       }
     });
   } else {
@@ -18,7 +30,8 @@ function writeOutput(config, output) {
   }
 }
 
-var JsonResultReporter = function(baseReporterDecorator, formatError, config) {
+var JsonResultReporter = function(baseReporterDecorator, formatError, config, helper, logger) {
+
   baseReporterDecorator(this);
 
   var logMessageFormater = function(error) {
@@ -46,7 +59,7 @@ var JsonResultReporter = function(baseReporterDecorator, formatError, config) {
     } else {
       output = converter.convertResults(this.results);
     }
-    writeOutput(config, output);
+    writeOutput(config, output, helper, logger);
 
     this.clear();
   };
@@ -54,7 +67,7 @@ var JsonResultReporter = function(baseReporterDecorator, formatError, config) {
   this.clear();
 };
 
-JsonResultReporter.$inject = ['baseReporterDecorator', 'formatError', 'config.jsonResultReporter'];
+JsonResultReporter.$inject = ['baseReporterDecorator', 'formatError', 'config.jsonResultReporter', 'helper', 'logger'];
 
 module.exports = {
   'reporter:json-result': ['type', JsonResultReporter]

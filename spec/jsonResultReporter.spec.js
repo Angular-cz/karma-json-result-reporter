@@ -25,21 +25,17 @@ describe("JsonResultReporter", function() {
         return error;
       });
 
-      this.helper = jasmine.createSpy('helper');
-      this.helper.mkdirIfNotExists = jasmine.createSpy('helper.mkdirIfNotExists spy').and.callFake(function(dirStr, callback) {
+      this.helper = jasmine.createSpyObj('helper', ['mkdirIfNotExists']);
+      this.helper.mkdirIfNotExists.and.callFake(function(dirStr, callback) {
         if (!fs.existsSync(dirStr)) {
           mkdirp.sync(dirStr);
         }
         callback();
       });
 
-      this.logger = jasmine.createSpy('logger');
-      log = jasmine.createSpy('log');
-      log.debug = jasmine.createSpy('log.debug spy').and.callFake(function(output) {});
-      log.warn = jasmine.createSpy('log.warn spy').and.callFake(function(output) {});
-      this.logger.create = jasmine.createSpy('logger.create spy').and.callFake(function(loggerName) {
-        return log;
-      });
+      var log = jasmine.createSpyObj('log', ['debug', 'warn']);
+      this.logger = jasmine.createSpyObj('logger', ['create']);
+      this.logger.create.and.returnValue(log);
     });
 
 

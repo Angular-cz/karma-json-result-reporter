@@ -98,24 +98,47 @@ describe("JsonResultReporter", function() {
         waitForFileAndCheckContent(config.outputFile, done);
       });
 
+      it('should write results synchronously, if isSynchronous is set', function(done) {
+        var config = {
+          outputFile: this.tempTestDir + '/my/nested/path/report-file.json',
+          isSynchronous: true
+        };
+
+        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
+        reporter.onBrowserError('test', ERROR_TEXT);
+        reporter.onRunComplete();
+
+        if (!checkFileAndContentSynchronously(config.outputFile, done)) {
+          done.fail('Results does not exists - ' + config.outputFile);
+        }
+      });
 
       function waitForFileAndCheckContent(outputFile, done) {
         setImmediate(function() {
-          if (fs.existsSync(outputFile)) {
-            fs.readFile(outputFile, function(err, result) {
-              if (err) {
-                done.fail('Read file error - ' + outputFile + ': ' + err);
-                return;
-              }
-
-              expect(result.toString()).toMatch(ERROR_TEXT);
-              done();
-            });
-          } else {
+          if (!checkFileAndContentSynchronously(outputFile, done)) {
             waitForFileAndCheckContent(outputFile, done);
           }
         });
       }
+
+      function checkFileAndContentSynchronously(outputFile, done) {
+        if (fs.existsSync(outputFile)) {
+          fs.readFile(outputFile, function(err, result) {
+            if (err) {
+              done.fail('Read file error - ' + outputFile + ': ' + err);
+              return;
+            }
+
+            expect(result.toString()).toMatch(ERROR_TEXT);
+            done();
+          });
+
+          return true;
+        } else {
+          return false;
+        }
+      }
+
     });
   })
 });

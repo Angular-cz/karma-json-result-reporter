@@ -55,6 +55,7 @@ describe("JsonResultReporter", function() {
       var ERROR_TEXT = 'some test error';
 
       beforeEach(function(done) {
+        this.result = null;
         this.tempTestDir = os.tmpdir() + '/karma-json-result-reporter';
 
         if (fs.existsSync(this.tempTestDir)) {
@@ -78,9 +79,26 @@ describe("JsonResultReporter", function() {
           outputFile: this.tempTestDir + '/report-file.json'
         };
 
+        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
+        reporter.onBrowserError('test', ERROR_TEXT);
+        reporter.onRunComplete();
+
+        waitForFileAndCheckContent(config.outputFile, done);
+      });
+
+      it('should write both errors and results if both exist', function(done) {
+        var config = {
+          outputFile: this.tempTestDir + '/report-file.json'
+        };
 
         var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
         reporter.onBrowserError('test', ERROR_TEXT);
+        this.result = {
+          suite: ['test suite'],
+          description: 'test description',
+          log: []
+        };
+        reporter.onSpecComplete('test', this.result);
         reporter.onRunComplete();
 
         waitForFileAndCheckContent(config.outputFile, done);
@@ -127,6 +145,10 @@ describe("JsonResultReporter", function() {
             if (err) {
               done.fail('Read file error - ' + outputFile + ': ' + err);
               return;
+            }
+            
+            if (this.result) {
+              expect(result.toString()).toMatch(this.result.description);
             }
 
             expect(result.toString()).toMatch(ERROR_TEXT);

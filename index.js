@@ -1,5 +1,6 @@
 var path = require('path');
 var fs = require('fs');
+var funMap = require('fun-map');
 var converter = require('./resultConverter');
 
 function writeOutput(config, output, helper, logger) {
@@ -53,12 +54,14 @@ var JsonResultReporter = function(baseReporterDecorator, formatError, config, he
   };
 
   this.onRunComplete = function() {
-    var output;
+    var output = {};
     if (this.errors.length) {
       output = converter.convertErrors(this.errors.map(logMessageFormater));
-    } else {
-      output = converter.convertResults(this.results);
     }
+    if (this.results.length) {
+      output = funMap.merge(output, converter.convertResults(this.results));
+    }
+
     writeOutput(config, output, helper, logger);
 
     this.clear();

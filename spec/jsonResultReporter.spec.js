@@ -54,8 +54,18 @@ describe("JsonResultReporter", function() {
 
       var ERROR_TEXT = 'some test error';
 
+      var RESULT = {
+        suite: ['test suite'],
+        description: 'test description',
+        log: []
+      };
+
       beforeEach(function(done) {
-        this.result = null;
+        this.resultData = {
+          result: null,
+          error: null
+        };
+
         this.tempTestDir = os.tmpdir() + '/karma-json-result-reporter';
 
         if (fs.existsSync(this.tempTestDir)) {
@@ -64,6 +74,26 @@ describe("JsonResultReporter", function() {
         } else {
           fs.mkdir(this.tempTestDir, done)
         }
+
+        this.reportResultDataAndCheckOutputFile = function(done, resultData, config) {
+          var defaultConfig = {
+            outputFile: this.tempTestDir + '/report-file.json'
+          };
+
+          config = config || defaultConfig;
+
+          var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
+          if (resultData.error) {
+            reporter.onBrowserError('test', resultData.error);
+          }
+          if (resultData.result) {
+            reporter.onSpecComplete('test', resultData.result);
+          }
+          reporter.onRunComplete();
+
+          waitForFileAndCheckContent(config.outputFile, done);
+        }
+
 
       });
 
@@ -75,33 +105,24 @@ describe("JsonResultReporter", function() {
       });
 
       it('should write error to config output file', function(done) {
-        var config = {
-          outputFile: this.tempTestDir + '/report-file.json'
-        };
+        this.resultData.error = ERROR_TEXT;
 
-        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
-        reporter.onBrowserError('test', ERROR_TEXT);
-        reporter.onRunComplete();
+        this.reportResultDataAndCheckOutputFile(done, this.resultData);
 
-        waitForFileAndCheckContent(config.outputFile, done);
+      });
+
+      it('should write results to config output file', function(done) {
+        this.resultData.result = RESULT;
+
+        this.reportResultDataAndCheckOutputFile(done, this.resultData);
       });
 
       it('should write both errors and results if both exist', function(done) {
-        var config = {
-          outputFile: this.tempTestDir + '/report-file.json'
-        };
+        this.resultData.error = ERROR_TEXT;
+        this.resultData.result = RESULT;
 
-        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
-        reporter.onBrowserError('test', ERROR_TEXT);
-        this.result = {
-          suite: ['test suite'],
-          description: 'test description',
-          log: []
-        };
-        reporter.onSpecComplete('test', this.result);
-        reporter.onRunComplete();
+        this.reportResultDataAndCheckOutputFile(done, this.resultData);
 
-        waitForFileAndCheckContent(config.outputFile, done);
       });
 
       it('should be able write report to nested path', function(done) {
@@ -109,11 +130,9 @@ describe("JsonResultReporter", function() {
           outputFile: this.tempTestDir + '/my/nested/path/report-file.json'
         };
 
-        var reporter = new JsonResultReporter(this.baseReporterDecorator, this.formatError, config, this.helper, this.logger);
-        reporter.onBrowserError('test', ERROR_TEXT);
-        reporter.onRunComplete();
+        this.resultData.error = ERROR_TEXT;
 
-        waitForFileAndCheckContent(config.outputFile, done);
+        this.reportResultDataAndCheckOutputFile(done, this.resultData, config);
       });
 
       it('should write results synchronously, if isSynchronous is set', function(done) {
@@ -146,12 +165,14 @@ describe("JsonResultReporter", function() {
               done.fail('Read file error - ' + outputFile + ': ' + err);
               return;
             }
-            
+
             if (this.result) {
-              expect(result.toString()).toMatch(this.result.description);
+              expect(result.toString()).toMatch(this.resultdata.result.description);
             }
 
-            expect(result.toString()).toMatch(ERROR_TEXT);
+            if (this.error) {
+              expect(result.toString()).toMatch(this.resultdata.error);
+            }
             done();
           });
 
